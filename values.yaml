@@ -1,0 +1,40 @@
+replicaCount: 3
+
+environment: "production"
+productionMode: true
+
+image:
+  repository: nihal2000/fastapi-email-app
+  tag: "v1"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 8000
+
+# Loop chalane ke liye Environment Variables ka map
+envVariables:
+  EMAIL_USER: "prod-admin@gmail.com"
+  EMAIL_PASSWORD: "super-secure-smtp-password"
+  DB_HOST: "postgres-prod-svc"
+  DEBUG: "false"
+
+# Server crash se bachane ke liye RAM/CPU Limits
+resources:
+  requests:
+    memory: "128Mi"
+    cpu: "100m"
+  limits:
+    memory: "256Mi"
+    cpu: "300m"
+
+# Auto-Healing ke liye Health Check Probes configuration
+probes:
+  liveness:
+    path: /docs
+    initialDelaySeconds: 15
+    periodSeconds: 20
+  readiness:
+    path: /docs
+    initialDelaySeconds: 10
+    periodSeconds: 10
